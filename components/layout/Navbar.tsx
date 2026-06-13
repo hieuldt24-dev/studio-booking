@@ -3,16 +3,11 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
-
-const NAV_LINKS = [
-  { label: "Studios", href: "/#studios" },
-  { label: "Pricing", href: "/pricing" },
-  { label: "Equipment", href: "/#equipment" },
-  { label: "About", href: "/#about" },
-] as const;
+import { Menu, X, Globe } from "lucide-react";
+import { useLanguage } from "./LanguageContext";
 
 export function Navbar() {
+  const { language, setLanguage, t } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
@@ -35,7 +30,6 @@ export function Navbar() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Determine text color: white when over hero (not scrolled), dark when scrolled
   const scrolledOrNotOnHome = scrolled || pathname !== "/";
   const textColor = scrolledOrNotOnHome ? "text-primary" : "text-white";
   const borderColor = scrolledOrNotOnHome ? "border-primary" : "border-white/20";
@@ -45,6 +39,13 @@ export function Navbar() {
     if (href === "/#studios") return pathname === "/";
     return false;
   };
+
+  const navLinks = [
+    { label: t("nav_studios"), href: "/#studios" },
+    { label: t("nav_pricing"), href: "/pricing" },
+    { label: t("nav_equipment"), href: "/#equipment" },
+    { label: t("nav_about"), href: "/#about" },
+  ];
 
   return (
     <header
@@ -68,7 +69,7 @@ export function Navbar() {
 
         {/* Navigation Links - Hidden on Mobile */}
         <div className="hidden md:flex items-center space-x-gutter">
-          {NAV_LINKS.map((link) => {
+          {navLinks.map((link) => {
             const active = isActive(link.href);
             return (
               <Link
@@ -87,7 +88,41 @@ export function Navbar() {
         </div>
 
         {/* Trailing Action */}
-        <div className="flex items-center gap-4 md:gap-gutter">
+        <div className="flex items-center gap-3 md:gap-4">
+          {/* Language Switcher Pill */}
+          <div className={`flex items-center gap-0.5 border rounded-full p-0.5 transition-colors duration-500 ${
+            scrolledOrNotOnHome ? "border-neutral-200 bg-neutral-50" : "border-white/10 bg-white/5"
+          }`}>
+            <button
+              onClick={() => setLanguage("vi")}
+              className={`font-sans text-[10px] font-extrabold px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                language === "vi"
+                  ? scrolledOrNotOnHome
+                    ? "bg-primary text-white"
+                    : "bg-white text-black"
+                  : scrolledOrNotOnHome
+                    ? "text-secondary hover:text-primary"
+                    : "text-white/60 hover:text-white"
+              }`}
+            >
+              VN
+            </button>
+            <button
+              onClick={() => setLanguage("en")}
+              className={`font-sans text-[10px] font-extrabold px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                language === "en"
+                  ? scrolledOrNotOnHome
+                    ? "bg-primary text-white"
+                    : "bg-white text-black"
+                  : scrolledOrNotOnHome
+                    ? "text-secondary hover:text-primary"
+                    : "text-white/60 hover:text-white"
+              }`}
+            >
+              EN
+            </button>
+          </div>
+
           <Link
             href="/booking"
             className={`hidden sm:inline-flex font-sans text-sm uppercase tracking-[0.12em] font-bold px-6 py-3 transition-all duration-300 active:scale-95 ${
@@ -96,7 +131,7 @@ export function Navbar() {
                 : "bg-white text-black hover:bg-white/90"
             }`}
           >
-            BOOK NOW
+            {t("nav_book_now")}
           </Link>
 
           {/* Mobile Menu Toggle */}
@@ -118,7 +153,7 @@ export function Navbar() {
           role="navigation"
           aria-label="Mobile navigation"
         >
-          {NAV_LINKS.map((link) => (
+          {navLinks.map((link) => (
             <Link
               key={link.href}
               className="font-sans text-sm uppercase tracking-[0.12em] text-primary hover:bg-neutral-50 py-3 px-4 transition-colors"
@@ -128,13 +163,14 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
-          <div className="pt-4 px-4">
+          
+          <div className="pt-4 px-4 flex flex-col gap-4">
             <Link
               href="/booking"
               className="block text-center font-sans text-sm uppercase tracking-[0.15em] font-bold bg-primary text-white py-3 hover:bg-neutral-800 transition-colors"
               onClick={() => setIsOpen(false)}
             >
-              BOOK NOW
+              {t("nav_book_now")}
             </Link>
           </div>
         </div>

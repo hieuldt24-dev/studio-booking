@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import { Navbar } from "@/components/layout/Navbar";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { StudiosSection } from "@/components/sections/StudiosSection";
@@ -22,11 +23,15 @@ export async function generateStaticParams() {
 // Generate dynamic metadata based on the database
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const page = landingPagesDb[slug];
+  const content = landingPagesDb[slug];
 
-  if (!page) {
+  if (!content) {
     return {};
   }
+
+  const cookieStore = await cookies();
+  const locale = (cookieStore.get("NEXT_LOCALE")?.value === "en" ? "en" : "vi") as "vi" | "en";
+  const page = content[locale];
 
   return {
     title: page.seo.title,
@@ -42,14 +47,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function DynamicLandingPage({ params }: PageProps) {
   const { slug } = await params;
-  const content = landingPagesDb[slug];
+  const pageContent = landingPagesDb[slug];
 
-  if (!content) {
+  if (!pageContent) {
     notFound();
   }
 
+  const cookieStore = await cookies();
+  const locale = (cookieStore.get("NEXT_LOCALE")?.value === "en" ? "en" : "vi") as "vi" | "en";
+  const content = pageContent[locale];
+
   // Fallback to root equipment if none is specified for this landing page
-  const pageEquipment = content.equipment || landingPagesDb.root.equipment;
+  const pageEquipment = content.equipment || landingPagesDb.root[locale].equipment;
 
   return (
     <>

@@ -6,12 +6,14 @@ import Link from "next/link";
 import { ArrowRight, Camera, Rotate3d } from "lucide-react";
 import { StudioListSectionProps } from "@/types/landing";
 import { Studio3DModal } from "../ui/Studio3DModal";
+import { useLanguage } from "@/components/layout/LanguageContext";
 
 export function StudiosSection({
   title,
   description,
   rooms,
 }: StudioListSectionProps) {
+  const { t } = useLanguage();
   const studioA = rooms[0];
   const studioB = rooms[1];
   const studioC = rooms[2];
@@ -51,7 +53,7 @@ export function StudiosSection({
                 panoramaUrl: studioA.panoramaUrl,
                 id: studioA.id
               })}
-              title="Click để xem 3D không gian phòng"
+              title={t("studios_view_3d_tooltip")}
             >
               <Image
                 src={studioA.image}
@@ -65,7 +67,7 @@ export function StudiosSection({
                 {studioA.panoramaUrl && (
                   <div className="opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300 bg-white/90 backdrop-blur-md text-primary font-sans text-xs font-bold tracking-[0.15em] uppercase px-5 py-3 rounded-full flex items-center gap-2 shadow-lg">
                     <Rotate3d className="w-4 h-4 animate-pulse text-indigo-600" />
-                    Xem 3D Phòng
+                    {t("view_3d")}
                   </div>
                 )}
               </div>
@@ -73,7 +75,7 @@ export function StudiosSection({
             <div className="p-6 md:p-8 flex justify-between items-center bg-white border-t border-neutral-200">
               <div>
                 <span className="font-sans text-xs font-extrabold tracking-[0.2em] text-indigo-600 uppercase mb-1.5 block">
-                  Available Now
+                  {t("studios_available_now")}
                 </span>
                 <h3 className="font-sans text-xl md:text-2xl lg:text-3xl font-extrabold tracking-wide text-primary uppercase leading-tight">
                   {studioA.name}
@@ -95,7 +97,7 @@ export function StudiosSection({
           <div className="flex-1 border border-neutral-200 p-8 md:p-10 flex flex-col justify-center bg-white">
             <Camera className="w-10 h-10 mb-6 text-primary" />
             <h4 className="font-sans text-xs font-extrabold mb-4 uppercase text-primary tracking-[0.2em]">
-              Equipment Included
+              {t("studios_equipment_included")}
             </h4>
             <ul className="space-y-3">
               {studioA?.equipment.slice(0, 3).map((item, index) => (
@@ -111,16 +113,16 @@ export function StudiosSection({
 
           <div className="bg-black text-white p-8 md:p-10 flex flex-col justify-center">
             <h4 className="font-sans text-xs font-extrabold mb-2 uppercase tracking-[0.2em]">
-              Member Access
+              {t("studios_member_access")}
             </h4>
             <p className="font-sans text-sm opacity-80 mb-6 leading-relaxed">
-              Join our creative collective for 24/7 access and priority booking.
+              {t("studios_member_access_desc")}
             </p>
             <Link
               className="font-sans text-xs underline tracking-[0.12em] uppercase font-bold text-white hover:opacity-70 self-start transition-opacity"
               href="/pricing"
             >
-              Learn More
+              {t("studios_learn_more")}
             </Link>
           </div>
         </div>
@@ -135,7 +137,7 @@ export function StudiosSection({
                 panoramaUrl: studioB.panoramaUrl,
                 id: studioB.id
               })}
-              title="Click để xem 3D không gian phòng"
+              title={t("studios_view_3d_tooltip")}
             >
               <Image
                 src={studioB.image}
@@ -150,7 +152,7 @@ export function StudiosSection({
                 {studioB.panoramaUrl && (
                   <div className="opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300 bg-white/90 backdrop-blur-md text-primary font-sans text-xs font-bold tracking-[0.15em] uppercase px-5 py-3 rounded-full flex items-center gap-2 shadow-lg">
                     <Rotate3d className="w-4 h-4 animate-pulse text-indigo-600" />
-                    Xem 3D Phòng
+                    {t("view_3d")}
                   </div>
                 )}
               </div>
@@ -192,7 +194,7 @@ export function StudiosSection({
                 panoramaUrl: studioC.panoramaUrl,
                 id: studioC.id
               })}
-              title="Click để xem 3D không gian phòng"
+              title={t("studios_view_3d_tooltip")}
             >
               <Image
                 src={studioC.image}
@@ -207,7 +209,7 @@ export function StudiosSection({
                 {studioC.panoramaUrl && (
                   <div className="opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300 bg-white/90 backdrop-blur-md text-primary font-sans text-xs font-bold tracking-[0.15em] uppercase px-5 py-3 rounded-full flex items-center gap-2 shadow-lg">
                     <Rotate3d className="w-4 h-4 animate-pulse text-indigo-600" />
-                    Xem 3D Phòng
+                    {t("view_3d")}
                   </div>
                 )}
               </div>

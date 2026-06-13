@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Syne, Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
+import { LanguageProvider } from "@/components/layout/LanguageContext";
 
 const syne = Syne({
   variable: "--font-syne",
@@ -38,11 +39,13 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="vi"
       className={`${syne.variable} ${hanken.variable} h-full scroll-smooth`}
     >
       <body className="font-sans antialiased text-foreground bg-background min-h-screen flex flex-col selection:bg-black selection:text-white">
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

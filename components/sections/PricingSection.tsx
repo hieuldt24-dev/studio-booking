@@ -1,90 +1,91 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Check, ChevronDown, Sparkles } from "lucide-react";
 import { landingPagesDb } from "@/lib/content";
 import { formatPrice } from "@/lib/formatPrice";
-
-const membershipPlans = [
-  {
-    name: "Creator Pass",
-    price: 0,
-    period: "month",
-    description: "Ideal for independent artists and hobbyist photographers starting out.",
-    features: [
-      "Pay-as-you-go booking rates",
-      "Reserve up to 14 days in advance",
-      "Standard studio support during hours",
-      "Access to community slack",
-      "Free raw file delivery option"
-    ],
-    cta: "Get Started",
-    popular: false,
-    href: "/booking"
-  },
-  {
-    name: "Pro Member",
-    price: 1500000,
-    period: "month",
-    description: "Designed for active freelancers and boutique studios requiring consistent access.",
-    features: [
-      "15% off all studio hourly rates",
-      "Reserve up to 30 days in advance",
-      "1 free lighting kit rental per session",
-      "Priority customer support",
-      "24/7 keycard access requests available"
-    ],
-    cta: "Join Pro Membership",
-    popular: true,
-    href: "/booking?plan=pro"
-  },
-  {
-    name: "Agency Unlimited",
-    price: 5000000,
-    period: "month",
-    description: "For high-production commercial agencies and creative design teams.",
-    features: [
-      "25% off all studio hourly rates",
-      "Reserve up to 60 days in advance",
-      "Free base equipment rental selection",
-      "Dedicated account manager",
-      "On-site studio assistant included (2h)",
-      "Priority rescheduling (no penalty up to 12h)"
-    ],
-    cta: "Contact for Agency",
-    popular: false,
-    href: "/booking?plan=agency"
-  }
-];
-
-
-const faqs = [
-  {
-    question: "What is the minimum booking time?",
-    answer: "Our minimum booking duration is 1.5 hours per session. This ensures each creator has enough time to set up, execute their shoot, and pack up without feeling rushed. A 15-minute buffer is automatically added between bookings for studio reset and cleaning."
-  },
-  {
-    question: "What is your cancellation and rescheduling policy?",
-    answer: "We offer full refunds for cancellations or rescheduling requested 24 hours or more before your session. Cancellations between 12 to 24 hours incur a 50% charge. Unfortunately, cancellations made under 12 hours notice will result in the loss of the full booking deposit."
-  },
-  {
-    question: "Can we bring our own equipment?",
-    answer: "Absolutely! You are welcome to bring any cameras, lenses, lights, or props needed for your creative vision at no additional fee. All studio bookings include basic stands, V-flats, and sandbags."
-  },
-  {
-    question: "Are your studios soundproofed?",
-    answer: "Studio A (The Loft) and Studio B (Industrial Edge) are professionally sound-dampened, making them excellent choices for podcasting, interviews, and video projects with dialogue. Studio C is specifically optimized for natural daylight photography and has normal ambient sound properties."
-  },
-  {
-    question: "Are there discounts for full-day bookings?",
-    answer: "Yes, we offer discounted custom rates for bookings of 8 hours or longer, as well as multi-day production schedules. Please contact our support team directly to request a custom quote."
-  }
-];
+import { useLanguage } from "@/components/layout/LanguageContext";
 
 export function PricingSection() {
-  const content = landingPagesDb.root;
+  const { language, t } = useLanguage();
+  const content = landingPagesDb.root[language];
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const membershipPlans = useMemo(() => [
+    {
+      name: t("plan_creator_name"),
+      price: 0,
+      period: language === "vi" ? "tháng" : "month",
+      description: t("plan_creator_desc"),
+      features: [
+        t("plan_creator_f1"),
+        t("plan_creator_f2"),
+        t("plan_creator_f3"),
+        t("plan_creator_f4"),
+        t("plan_creator_f5")
+      ],
+      cta: t("plan_creator_cta"),
+      popular: false,
+      href: "/booking"
+    },
+    {
+      name: t("plan_pro_name"),
+      price: 1500000,
+      period: language === "vi" ? "tháng" : "month",
+      description: t("plan_pro_desc"),
+      features: [
+        t("plan_pro_f1"),
+        t("plan_pro_f2"),
+        t("plan_pro_f3"),
+        t("plan_pro_f4"),
+        t("plan_pro_f5")
+      ],
+      cta: t("plan_pro_cta"),
+      popular: true,
+      href: "/booking?plan=pro"
+    },
+    {
+      name: t("plan_agency_name"),
+      price: 5000000,
+      period: language === "vi" ? "tháng" : "month",
+      description: t("plan_agency_desc"),
+      features: [
+        t("plan_agency_f1"),
+        t("plan_agency_f2"),
+        t("plan_agency_f3"),
+        t("plan_agency_f4"),
+        t("plan_agency_f5"),
+        t("plan_agency_f6")
+      ],
+      cta: t("plan_agency_cta"),
+      popular: false,
+      href: "/booking?plan=agency"
+    }
+  ], [language, t]);
+
+  const faqs = useMemo(() => [
+    {
+      question: t("faq_q1"),
+      answer: t("faq_a1")
+    },
+    {
+      question: t("faq_q2"),
+      answer: t("faq_a2")
+    },
+    {
+      question: t("faq_q3"),
+      answer: t("faq_a3")
+    },
+    {
+      question: t("faq_q4"),
+      answer: t("faq_a4")
+    },
+    {
+      question: t("faq_q5"),
+      answer: t("faq_a5")
+    }
+  ], [t]);
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
@@ -95,13 +96,13 @@ export function PricingSection() {
       {/* Intro Header */}
       <div className="text-center max-w-3xl mx-auto mb-16 md:mb-24">
         <span className="font-sans text-xs uppercase tracking-[0.3em] font-extrabold text-indigo-600 mb-4 block">
-          Transparent Pricing
+          {t("pricing_tagline")}
         </span>
         <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.04em] uppercase text-primary leading-[0.95] mb-6">
-          Rates & Packages
+          {t("pricing_title")}
         </h1>
         <p className="font-sans text-sm md:text-base text-secondary leading-relaxed max-w-2xl mx-auto">
-          Tailored spaces and top-tier gear. No hidden fees, no complexity. Choose the perfect environment and resources for your artistic execution.
+          {t("pricing_subtitle")}
         </p>
       </div>
 
@@ -109,10 +110,10 @@ export function PricingSection() {
       <div className="mb-20 md:mb-32">
         <div className="flex flex-col md:flex-row justify-between items-baseline mb-10 border-b border-neutral-200 pb-6">
           <h2 className="font-heading text-2xl md:text-4xl font-extrabold uppercase tracking-tight text-primary">
-            Studio Spaces
+            {t("pricing_spaces_title")}
           </h2>
           <p className="font-sans text-xs md:text-sm text-secondary uppercase tracking-[0.1em] mt-2 md:mt-0">
-            *Rates are charged hourly with a 1.5-hour minimum
+            {t("pricing_spaces_subtitle")}
           </p>
         </div>
 
@@ -142,12 +143,12 @@ export function PricingSection() {
 
               <div className="p-8 flex-grow bg-neutral-50/50">
                 <span className="font-sans text-xs font-extrabold tracking-widest uppercase text-primary block mb-4">
-                  Specs & Features
+                  {t("pricing_specs_title")}
                 </span>
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-center gap-2.5 font-sans text-xs text-neutral-700">
                     <Check className="w-4 h-4 text-indigo-600 flex-shrink-0" />
-                    <span>Capacity: up to {room.capacity} people</span>
+                    <span>{t("pricing_capacity", { capacity: room.capacity })}</span>
                   </li>
                   {room.equipment.map((item, idx) => (
                     <li key={idx} className="flex items-center gap-2.5 font-sans text-xs text-neutral-700">
@@ -163,7 +164,7 @@ export function PricingSection() {
                   href={`/booking?studio=${room.id}`}
                   className="block text-center w-full py-4 bg-primary text-white font-sans text-xs uppercase tracking-[0.15em] font-bold hover:bg-neutral-800 transition-colors"
                 >
-                  Book {room.name.split(":")[1]?.trim() || "Space"}
+                  {t("pricing_spaces_btn", { room: room.name.split(":")[1]?.trim() || room.name })}
                 </Link>
               </div>
             </div>
@@ -175,10 +176,10 @@ export function PricingSection() {
       <div className="mb-20 md:mb-32">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <h2 className="font-heading text-3xl md:text-4xl font-extrabold uppercase tracking-tight text-primary mb-4">
-            Creative Memberships
+            {t("pricing_memberships_title")}
           </h2>
           <p className="font-sans text-sm md:text-base text-secondary leading-relaxed">
-            Unlock exclusive discounts, priority booking windows, and access to premium hardware with a monthly subscription plan.
+            {t("pricing_memberships_subtitle")}
           </p>
         </div>
 
@@ -195,7 +196,7 @@ export function PricingSection() {
               {plan.popular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white font-sans text-xs uppercase tracking-[0.15em] font-extrabold px-4 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
                   <Sparkles className="w-3 h-3" />
-                  Most Popular
+                  {language === "vi" ? "Phổ biến nhất" : "Most Popular"}
                 </div>
               )}
 
@@ -208,7 +209,7 @@ export function PricingSection() {
                 </p>
                 <div className="flex items-baseline gap-1">
                   <span className="font-sans text-2xl md:text-3xl font-black text-primary">
-                    {plan.price === 0 ? "FREE" : formatPrice(plan.price)}
+                    {plan.price === 0 ? (language === "vi" ? "MIỄN PHÍ" : "FREE") : formatPrice(plan.price)}
                   </span>
                   {plan.price > 0 && (
                     <span className="font-sans text-xs text-secondary">/{plan.period}</span>
@@ -218,7 +219,7 @@ export function PricingSection() {
 
               <div className="p-8 flex-grow bg-neutral-50/50">
                 <span className="font-sans text-xs font-extrabold tracking-widest uppercase text-primary block mb-4">
-                  What&apos;s Included
+                  {language === "vi" ? "Quyền lợi bao gồm" : "What's Included"}
                 </span>
                 <ul className="space-y-3.5 mb-6">
                   {plan.features.map((feature, fIdx) => (
@@ -251,10 +252,10 @@ export function PricingSection() {
       <div className="max-w-4xl mx-auto border-t border-neutral-200 pt-20">
         <div className="text-center mb-16">
           <h2 className="font-heading text-3xl md:text-4xl font-extrabold uppercase tracking-tight text-primary mb-4">
-            Pricing FAQ
+            {t("pricing_faq_title")}
           </h2>
           <p className="font-sans text-sm md:text-base text-secondary">
-            Got questions about payments, cancellations, or equipment policies? We&apos;ve got answers.
+            {t("pricing_faq_subtitle")}
           </p>
         </div>
 

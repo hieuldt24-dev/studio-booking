@@ -6,6 +6,7 @@ import Link from "next/link";
 import { SlidersHorizontal, Camera, Lightbulb, Mic, Plus } from "lucide-react";
 import { EquipmentItem } from "@/types/landing";
 import { formatPrice } from "@/lib/formatPrice";
+import { useLanguage } from "@/components/layout/LanguageContext";
 
 interface EquipmentSectionProps {
   equipment?: EquipmentItem[];
@@ -14,13 +15,14 @@ interface EquipmentSectionProps {
 type CategoryFilter = "all" | "camera" | "lighting" | "audio_other";
 
 export function EquipmentSection({ equipment = [] }: EquipmentSectionProps) {
+  const { language, t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>("all");
 
   const categories = [
-    { id: "all", label: "All Gear", icon: SlidersHorizontal },
-    { id: "camera", label: "Cameras & Lenses", icon: Camera },
-    { id: "lighting", label: "Lighting & Modifiers", icon: Lightbulb },
-    { id: "audio_other", label: "Audio & Support", icon: Mic },
+    { id: "all", label: t("eq_tab_all"), icon: SlidersHorizontal },
+    { id: "camera", label: t("eq_tab_cameras"), icon: Camera },
+    { id: "lighting", label: t("eq_tab_lighting"), icon: Lightbulb },
+    { id: "audio_other", label: t("eq_tab_audio"), icon: Mic },
   ];
 
   const filteredEquipment = equipment.filter((item) => {
@@ -40,14 +42,14 @@ export function EquipmentSection({ equipment = [] }: EquipmentSectionProps) {
       <div className="flex flex-col md:flex-row justify-between items-baseline mb-12 gap-6">
         <div>
           <span className="font-sans text-xs font-extrabold tracking-[0.2em] text-indigo-600 uppercase mb-2 block">
-            Gear Catalogue
+            {t("eq_tagline")}
           </span>
           <h2 className="font-heading text-4xl sm:text-5xl md:text-[76px] lg:text-[88px] font-extrabold tracking-[-0.05em] uppercase text-primary leading-[0.95]">
-            EQUIPMENT RENTAL
+            {t("eq_title")}
           </h2>
         </div>
         <p className="font-sans text-sm md:text-base leading-relaxed text-secondary max-w-md">
-          High-end professional equipment available for rent. Add them to your studio session or book them separately.
+          {t("eq_subtitle")}
         </p>
       </div>
 
@@ -77,7 +79,7 @@ export function EquipmentSection({ equipment = [] }: EquipmentSectionProps) {
       <div className="grid grid-cols-12 gap-6">
         {filteredEquipment.length === 0 ? (
           <div className="col-span-12 py-20 text-center border border-dashed border-neutral-200">
-            <p className="font-sans text-secondary text-sm">No equipment found in this category.</p>
+            <p className="font-sans text-secondary text-sm">{t("eq_no_gear")}</p>
           </div>
         ) : (
           filteredEquipment.map((item, idx) => {
@@ -107,7 +109,7 @@ export function EquipmentSection({ equipment = [] }: EquipmentSectionProps) {
                     />
                     <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 border border-neutral-200">
                       <span className="font-sans text-xs font-extrabold uppercase tracking-[0.1em] text-primary">
-                        {item.category === "camera" ? "Camera & Lens" : item.category === "lighting" ? "Lighting" : "Gear"}
+                        {item.category === "camera" ? t("eq_cat_camera") : item.category === "lighting" ? t("eq_cat_lighting") : t("eq_cat_gear")}
                       </span>
                     </div>
                   </div>
@@ -139,7 +141,7 @@ export function EquipmentSection({ equipment = [] }: EquipmentSectionProps) {
                 <div className="px-6 md:px-8 pb-6 md:pb-8 pt-4 border-t border-neutral-100 flex items-center justify-between mt-auto">
                   <div>
                     <span className="font-sans text-xs text-secondary uppercase block tracking-[0.1em]">
-                      Rate / Session
+                      {t("eq_rate_session")}
                     </span>
                     <span className="font-sans text-base font-extrabold text-primary">
                       {formatPrice(item.pricePerSession)}
@@ -151,7 +153,7 @@ export function EquipmentSection({ equipment = [] }: EquipmentSectionProps) {
                     aria-label={`Rent ${item.name}`}
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    Rent
+                    {t("eq_btn_rent")}
                   </Link>
                 </div>
               </div>

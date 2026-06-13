@@ -9,6 +9,7 @@ export function HeroSection({
   title,
   ctaText,
   backgroundImage,
+  description,
 }: HeroSectionProps) {
   const [loaded, setLoaded] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
@@ -67,10 +68,10 @@ export function HeroSection({
             src={backgroundImage}
             fill
             priority
+            unoptimized
             className={`object-cover transition-all duration-[2000ms] ease-out ${loaded ? "scale-100 opacity-100" : "scale-110 opacity-0"
               }`}
             sizes="100vw"
-            quality={85}
             onLoad={() => setLoaded(true)}
           />
         </div>
@@ -95,7 +96,7 @@ export function HeroSection({
           style={{ transitionDelay: "300ms" }}
         >
           <span className="inline-block font-sans text-xs md:text-sm uppercase tracking-[0.4em] text-white/50 font-semibold mb-6 md:mb-8">
-            Premium Photography Studios
+            {description || "Premium Photography Studios"}
           </span>
         </div>
 

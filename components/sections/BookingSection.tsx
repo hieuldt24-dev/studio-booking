@@ -5,10 +5,12 @@ import Image from "next/image";
 import { Check, Calendar, Clock, DollarSign, Camera, Info, X, Sparkles, CheckCircle2 } from "lucide-react";
 import { landingPagesDb } from "@/lib/content";
 import { formatPrice } from "@/lib/formatPrice";
+import { useLanguage } from "@/components/layout/LanguageContext";
 
 export function BookingSection() {
-  const studios = landingPagesDb.root.studios.rooms;
-  const equipmentList = useMemo(() => landingPagesDb.root.equipment || [], []);
+  const { language, t } = useLanguage();
+  const studios = landingPagesDb.root[language].studios.rooms;
+  const equipmentList = useMemo(() => landingPagesDb.root[language].equipment || [], [language]);
 
   // Form states
   const [selectedStudio, setSelectedStudio] = useState<string>("studio-a");
@@ -34,7 +36,8 @@ export function BookingSection() {
   // Initialize equipment states
   useEffect(() => {
     const initial: Record<string, { selected: boolean; quantity: number }> = {};
-    equipmentList.forEach((item) => {
+    // Use VI equipment keys to keep initialization stable
+    landingPagesDb.root.vi.equipment?.forEach((item) => {
       initial[item.id] = { selected: false, quantity: 1 };
     });
     setSelectedEquipment(initial);
@@ -53,7 +56,7 @@ export function BookingSection() {
       // Handle studio parameter (e.g. ?studio=studio-a)
       const studioParam = params.get("studio");
       if (studioParam) {
-        const validIds = studios.map((s) => s.id);
+        const validIds = landingPagesDb.root.vi.studios.rooms.map((s) => s.id);
         if (validIds.includes(studioParam)) {
           setSelectedStudio(studioParam);
         } else if (studioParam === "none") {
@@ -63,7 +66,8 @@ export function BookingSection() {
 
       // Handle equipment parameter (e.g. ?equipment=sony-fx3)
       const eqParam = params.get("equipment");
-      if (eqParam && equipmentList.some((item) => item.id === eqParam)) {
+      const hasEq = landingPagesDb.root.vi.equipment?.some((item) => item.id === eqParam);
+      if (eqParam && hasEq) {
         setSelectedEquipment((prev) => ({
           ...prev,
           [eqParam]: {
@@ -73,7 +77,7 @@ export function BookingSection() {
         }));
       }
     }
-  }, [studios, equipmentList]);
+  }, []);
 
   // Calculate rental duration in hours
   const getDurationHours = () => {
@@ -155,8 +159,6 @@ export function BookingSection() {
     setSelectedStudio("studio-a");
   };
 
-
-
   return (
     <section
       className="py-section-gap px-5 md:px-margin-desktop max-w-container-max mx-auto border-t border-neutral-200"
@@ -167,13 +169,13 @@ export function BookingSection() {
         <div className="col-span-12 lg:col-span-7">
           <div className="mb-10">
             <span className="font-sans text-[9px] sm:text-[10px] font-extrabold tracking-[0.25em] text-indigo-600 uppercase mb-2 block">
-              Reservation System
+              {t("booking_tagline")}
             </span>
             <h2 className="font-heading text-3xl sm:text-5xl md:text-[64px] font-extrabold tracking-[-0.05em] uppercase text-primary leading-[0.95] mb-4">
-              BOOKING CENTER
+              {t("booking_title")}
             </h2>
             <p className="font-sans text-sm text-secondary leading-relaxed max-w-lg">
-              Book a photography studio environment and customize your package with high-end camera bodies, lenses, and lighting equipment.
+              {t("booking_subtitle")}
             </p>
           </div>
 
@@ -182,14 +184,14 @@ export function BookingSection() {
             <div className="space-y-6">
               <h3 className="font-sans text-xs font-extrabold uppercase tracking-[0.2em] text-primary border-b border-neutral-100 pb-3 flex items-center gap-2">
                 <span className="flex items-center justify-center w-6 h-6 rounded-full bg-neutral-900 text-white font-sans text-[10px]">1</span>
-                Select Space & Time
+                {t("booking_step1")}
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Studio Selection */}
                 <div>
                   <label htmlFor="booking-studio" className="font-sans text-[9px] uppercase tracking-[0.22em] text-secondary font-bold mb-2 block">
-                    Select Environment
+                    {t("booking_form_studio")}
                   </label>
                   <select
                     id="booking-studio"
@@ -202,14 +204,14 @@ export function BookingSection() {
                         {room.name} ({formatPrice(room.pricePerHour)}/hr)
                       </option>
                     ))}
-                    <option value="none">Equipment Only (No Studio Rental)</option>
+                    <option value="none">{t("booking_form_no_studio")}</option>
                   </select>
                 </div>
 
                 {/* Date Selection */}
                 <div>
                   <label htmlFor="booking-date" className="font-sans text-[9px] uppercase tracking-[0.22em] text-secondary font-bold mb-2 block">
-                    Choose Date
+                    {t("booking_form_date")}
                   </label>
                   <div className="relative">
                     <input
@@ -227,7 +229,7 @@ export function BookingSection() {
                 {/* Start Time */}
                 <div>
                   <label htmlFor="booking-start" className="font-sans text-[9px] uppercase tracking-[0.22em] text-secondary font-bold mb-2 block">
-                    Start Time
+                    {t("booking_form_start_time")}
                   </label>
                   <input
                     id="booking-start"
@@ -242,7 +244,7 @@ export function BookingSection() {
                 {/* End Time */}
                 <div>
                   <label htmlFor="booking-end" className="font-sans text-[9px] uppercase tracking-[0.22em] text-secondary font-bold mb-2 block">
-                    End Time
+                    {t("booking_form_end_time")}
                   </label>
                   <input
                     id="booking-end"
@@ -258,7 +260,7 @@ export function BookingSection() {
               {durationHours <= 0 && (
                 <div className="flex items-center gap-2 p-3 bg-red-50 text-red-700 text-xs border border-red-200">
                   <Info className="w-4 h-4 flex-shrink-0" />
-                  <span>End time must be after start time.</span>
+                  <span>{t("booking_error_time")}</span>
                 </div>
               )}
             </div>
@@ -267,11 +269,11 @@ export function BookingSection() {
             <div className="space-y-6">
               <h3 className="font-sans text-xs font-extrabold uppercase tracking-[0.2em] text-primary border-b border-neutral-100 pb-3 flex items-center gap-2">
                 <span className="flex items-center justify-center w-6 h-6 rounded-full bg-neutral-900 text-white font-sans text-[10px]">2</span>
-                Equipment Add-ons
+                {t("booking_step2")}
               </h3>
 
               <p className="font-sans text-xs text-secondary mb-4 leading-relaxed">
-                Add specialized gear to your reservation. Rental fees are charged flat per booking session.
+                {t("booking_addons_desc")}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
@@ -337,20 +339,20 @@ export function BookingSection() {
             <div className="space-y-6">
               <h3 className="font-sans text-xs font-extrabold uppercase tracking-[0.2em] text-primary border-b border-neutral-100 pb-3 flex items-center gap-2">
                 <span className="flex items-center justify-center w-6 h-6 rounded-full bg-neutral-900 text-white font-sans text-[10px]">3</span>
-                Your Contact Information
+                {t("booking_step3")}
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Name */}
                 <div>
                   <label htmlFor="booking-name" className="font-sans text-[9px] uppercase tracking-[0.22em] text-secondary font-bold mb-2 block">
-                    Full Name <span className="text-indigo-600">*</span>
+                    {t("booking_form_name")} <span className="text-indigo-600">*</span>
                   </label>
                   <input
                     id="booking-name"
                     required
                     type="text"
-                    placeholder="E.g., Nguyen Van A"
+                    placeholder={t("booking_form_name_placeholder")}
                     value={clientName}
                     onChange={(e) => setClientName(e.target.value)}
                     className="w-full bg-transparent border-t-0 border-x-0 border-b border-neutral-300 focus:border-primary p-3 font-sans text-sm text-primary focus:ring-0 focus:outline-none transition-colors"
@@ -360,13 +362,13 @@ export function BookingSection() {
                 {/* Phone */}
                 <div>
                   <label htmlFor="booking-phone" className="font-sans text-[9px] uppercase tracking-[0.22em] text-secondary font-bold mb-2 block">
-                    Phone Number <span className="text-indigo-600">*</span>
+                    {t("booking_form_phone")} <span className="text-indigo-600">*</span>
                   </label>
                   <input
                     id="booking-phone"
                     required
                     type="tel"
-                    placeholder="E.g., 0912345678"
+                    placeholder={t("booking_form_phone_placeholder")}
                     value={clientPhone}
                     onChange={(e) => setClientPhone(e.target.value)}
                     className="w-full bg-transparent border-t-0 border-x-0 border-b border-neutral-300 focus:border-primary p-3 font-sans text-sm text-primary focus:ring-0 focus:outline-none transition-colors"
@@ -376,13 +378,13 @@ export function BookingSection() {
                 {/* Email */}
                 <div className="md:col-span-2">
                   <label htmlFor="booking-email" className="font-sans text-[9px] uppercase tracking-[0.22em] text-secondary font-bold mb-2 block">
-                    Email Address <span className="text-indigo-600">*</span>
+                    {t("booking_form_email")} <span className="text-indigo-600">*</span>
                   </label>
                   <input
                     id="booking-email"
                     required
                     type="email"
-                    placeholder="E.g., client@example.com"
+                    placeholder={t("booking_form_email_placeholder")}
                     value={clientEmail}
                     onChange={(e) => setClientEmail(e.target.value)}
                     className="w-full bg-transparent border-t-0 border-x-0 border-b border-neutral-300 focus:border-primary p-3 font-sans text-sm text-primary focus:ring-0 focus:outline-none transition-colors"
@@ -392,12 +394,12 @@ export function BookingSection() {
                 {/* Special Message */}
                 <div className="md:col-span-2">
                   <label htmlFor="booking-msg" className="font-sans text-[9px] uppercase tracking-[0.22em] text-secondary font-bold mb-2 block">
-                    Special Requirements
+                    {t("booking_form_notes")}
                   </label>
                   <textarea
                     id="booking-msg"
                     rows={3}
-                    placeholder="E.g., lighting requirements, specific backdrops, concept details..."
+                    placeholder={t("booking_form_notes_placeholder")}
                     value={clientMessage}
                     onChange={(e) => setClientMessage(e.target.value)}
                     className="w-full bg-transparent border-t-0 border-x-0 border-b border-neutral-300 focus:border-primary p-3 font-sans text-sm text-primary focus:ring-0 focus:outline-none transition-colors resize-none"
@@ -412,7 +414,7 @@ export function BookingSection() {
               disabled={durationHours <= 0 && selectedStudio !== "none"}
               className="cta-sweep group relative inline-flex items-center justify-center bg-black text-white px-12 py-5 font-sans text-sm font-bold uppercase tracking-[0.12em] transition-all duration-300 hover:text-white active:scale-[0.98] disabled:bg-neutral-300 disabled:cursor-not-allowed w-full md:w-auto cursor-pointer"
             >
-              <span className="relative z-10">CONFIRM RESERVATION</span>
+              <span className="relative z-10">{t("booking_btn_submit")}</span>
             </button>
           </form>
         </div>
@@ -421,7 +423,7 @@ export function BookingSection() {
         <div className="col-span-12 lg:col-span-5">
           <div className="border border-black bg-white p-6 md:p-8 sticky top-32 space-y-6 shadow-sm">
             <h3 className="font-sans text-xs font-extrabold uppercase tracking-[0.2em] text-primary border-b border-neutral-100 pb-3">
-              Reservation Summary
+              {t("booking_summary_title")}
             </h3>
 
             {/* Studio Line Item */}
@@ -444,7 +446,7 @@ export function BookingSection() {
                   {rentalDate && (
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5 text-indigo-600" />
-                      {new Date(rentalDate).toLocaleDateString("en-US", {
+                      {new Date(rentalDate).toLocaleDateString(language === "vi" ? "vi-VN" : "en-US", {
                         weekday: "short",
                         month: "short",
                         day: "numeric",
@@ -460,10 +462,10 @@ export function BookingSection() {
             ) : (
               <div className="pb-4 border-b border-neutral-100">
                 <h4 className="font-heading text-xs font-extrabold uppercase text-secondary">
-                  No Studio Selected
+                  {t("booking_no_studio_selected")}
                 </h4>
                 <p className="font-sans text-xs text-secondary mt-1">
-                  Equipment rental only. Pick-up at headquarters.
+                  {t("booking_no_studio_desc")}
                 </p>
               </div>
             )}
@@ -471,11 +473,11 @@ export function BookingSection() {
             {/* Equipment Line Items */}
             <div className="space-y-4 pb-4 border-b border-neutral-100">
               <h4 className="font-sans text-[10px] font-extrabold uppercase text-primary tracking-[0.15em]">
-                Equipment Rental
+                {t("booking_summary_addons_price")}
               </h4>
 
               {equipmentList.filter(item => selectedEquipment[item.id]?.selected).length === 0 ? (
-                <p className="font-sans text-xs text-secondary italic">No equipment selected.</p>
+                <p className="font-sans text-xs text-secondary italic">{t("booking_no_equipment")}</p>
               ) : (
                 <div className="space-y-3 max-h-[180px] overflow-y-auto pr-1">
                   {equipmentList
@@ -505,21 +507,21 @@ export function BookingSection() {
             {/* Billing Invoice Breakdown */}
             <div className="space-y-3 pt-2">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-sans text-[10px] text-secondary uppercase tracking-[0.15em] font-semibold">Subtotal</span>
+                <span className="font-sans text-[10px] text-secondary uppercase tracking-[0.15em] font-semibold">{t("booking_summary_subtotal")}</span>
                 <span className="font-sans font-extrabold text-primary">{formatPrice(calculatedTotal)}</span>
               </div>
               <div className="flex justify-between items-center text-xs">
-                <span className="font-sans text-[10px] text-secondary uppercase tracking-[0.15em] font-semibold">Taxes & Service Fees</span>
-                <span className="font-sans font-extrabold text-primary">Included</span>
+                <span className="font-sans text-[10px] text-secondary uppercase tracking-[0.15em] font-semibold">{t("booking_summary_taxes")}</span>
+                <span className="font-sans font-extrabold text-primary">{t("booking_summary_included")}</span>
               </div>
               <div className="flex justify-between items-center text-xs font-sans text-secondary border-t border-neutral-100 pt-3">
-                <span className="uppercase tracking-[0.15em] font-extrabold text-[10px]">Total Booking Value</span>
+                <span className="uppercase tracking-[0.15em] font-extrabold text-[10px]">{t("booking_summary_total")}</span>
                 <span className="font-extrabold text-base text-primary">{formatPrice(calculatedTotal)}</span>
               </div>
               <div className="flex justify-between items-center text-xs font-sans bg-indigo-50 border border-indigo-100 p-3 mt-4">
                 <div className="flex flex-col">
-                  <span className="font-extrabold text-[10px] text-indigo-900 uppercase tracking-[0.15em]">Deposit Amount (50%)</span>
-                  <span className="text-[10px] text-indigo-700 leading-tight">Pay now to confirm session</span>
+                  <span className="font-extrabold text-[10px] text-indigo-900 uppercase tracking-[0.15em]">{t("booking_summary_deposit")}</span>
+                  <span className="text-[10px] text-indigo-700 leading-tight">{t("booking_summary_deposit_desc")}</span>
                 </div>
                 <span className="font-extrabold text-xl text-indigo-600">{formatPrice(calculatedDeposit)}</span>
               </div>
@@ -538,7 +540,7 @@ export function BookingSection() {
               <div className="flex items-center gap-2 text-emerald-600">
                 <CheckCircle2 className="w-6 h-6 flex-shrink-0" />
                 <span className="font-heading text-lg font-bold uppercase tracking-wider">
-                  Request Confirmed
+                  {t("booking_success_title")}
                 </span>
               </div>
               <button
@@ -557,7 +559,7 @@ export function BookingSection() {
               <div className="space-y-6">
                 <div>
                   <span className="font-sans text-[10px] uppercase tracking-wider text-secondary">
-                    Booking Reference
+                    {t("booking_success_ref")}
                   </span>
                   <h4 className="font-heading text-2xl font-extrabold text-primary">
                     {bookingId}
@@ -566,7 +568,7 @@ export function BookingSection() {
 
                 <div className="space-y-4">
                   <h5 className="font-heading text-xs font-bold uppercase tracking-wider text-indigo-600">
-                    Summary Invoice
+                    {t("booking_success_summary")}
                   </h5>
                   <div className="space-y-2 text-xs font-sans text-secondary">
                     {selectedStudio !== "none" && currentStudioData && (
@@ -577,27 +579,27 @@ export function BookingSection() {
                     )}
                     {equipmentList.some(item => selectedEquipment[item.id]?.selected) && (
                       <div className="flex justify-between border-b border-neutral-50 pb-1.5">
-                        <span className="uppercase">Equipment rental</span>
+                        <span className="uppercase">{t("booking_summary_addons_price")}</span>
                         <span className="font-semibold text-primary">{formatPrice(equipmentCost)}</span>
                       </div>
                     )}
                     <div className="flex justify-between pt-1 font-bold text-primary">
-                      <span>Total Value</span>
+                      <span>{t("booking_summary_total")}</span>
                       <span>{formatPrice(totalCost)}</span>
                     </div>
                     <div className="flex justify-between text-indigo-600 font-bold bg-indigo-50/50 p-2 border border-indigo-100 mt-2">
-                      <span>Deposit Due (50%)</span>
+                      <span>{t("booking_summary_deposit")}</span>
                       <span>{formatPrice(depositAmount)}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-3 font-sans text-xs text-secondary bg-neutral-50 p-4 border border-neutral-100">
-                  <p className="font-semibold text-primary">What happens next?</p>
+                  <p className="font-semibold text-primary">{t("booking_success_next_title")}</p>
                   <ul className="list-disc pl-4 space-y-2">
-                    <li>A copy of this invoice has been sent to <span className="font-semibold text-primary">{clientEmail}</span>.</li>
-                    <li>Please scan the QR code to transfer the deposit cọc (50%).</li>
-                    <li>Once payment is detected, a confirmation email with a smart QR check-in ticket will be dispatched immediately.</li>
+                    <li>{t("booking_success_next_step1", { email: clientEmail })}</li>
+                    <li>{t("booking_success_next_step2")}</li>
+                    <li>{t("booking_success_next_step3")}</li>
                   </ul>
                 </div>
               </div>
@@ -606,10 +608,10 @@ export function BookingSection() {
               <div className="flex flex-col items-center justify-center p-6 border border-neutral-200 bg-neutral-50/50 rounded-xl space-y-4">
                 <div className="text-center">
                   <span className="font-sans text-[10px] font-bold uppercase tracking-[0.12em] text-secondary">
-                    Pay Securely with VietQR
+                    {t("booking_qr_secure")}
                   </span>
                   <p className="font-sans text-[11px] text-neutral-500 mt-1">
-                    Scan using any banking app
+                    {t("booking_qr_scan")}
                   </p>
                 </div>
 
@@ -625,15 +627,15 @@ export function BookingSection() {
                   <div className="absolute inset-0 bg-white/95 flex flex-col items-center justify-center gap-2 p-4 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <Sparkles className="w-6 h-6 text-indigo-600 animate-bounce" />
                     <p className="font-sans text-[10px] text-primary leading-tight font-semibold">
-                      Real dynamic QR code configured with Bank: MB, Acct: 190820268888, Amount: {formatPrice(depositAmount)}
+                      {t("booking_qr_hover", { amount: formatPrice(depositAmount) })}
                     </p>
                   </div>
                 </div>
 
                 <div className="text-center font-sans text-xs">
-                  <p className="font-bold text-neutral-800">MB Bank (Military Bank)</p>
-                  <p className="text-secondary mt-0.5">Account: <span className="font-mono text-primary font-semibold">190820268888</span></p>
-                  <p className="text-secondary">Name: <span className="font-semibold text-primary uppercase">DUO TECH STUDIO</span></p>
+                  <p className="font-bold text-neutral-800">{t("booking_bank_name")}</p>
+                  <p className="text-secondary mt-0.5">{t("booking_bank_account")} <span className="font-mono text-primary font-semibold">190820268888</span></p>
+                  <p className="text-secondary">{t("booking_bank_holder")} <span className="font-semibold text-primary uppercase">DUO TECH STUDIO</span></p>
                 </div>
               </div>
 
@@ -645,7 +647,7 @@ export function BookingSection() {
                 onClick={resetForm}
                 className="px-6 py-3 border border-neutral-300 hover:border-black font-sans text-xs font-bold uppercase tracking-wider bg-white transition-colors cursor-pointer"
               >
-                Close Window
+                {t("booking_success_close")}
               </button>
             </div>
 
