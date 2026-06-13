@@ -32,7 +32,7 @@ export const landingPagesDb: Record<string, LandingPageContent> = {
           image: "https://lh3.googleusercontent.com/aida-public/AB6AXuD3gdOuE2geUt0i4zpCj3LotPluaCixHeWyLZM2qTtJo9v7qqLYZqdrOax28U3Fp73OQ_1Fjyh2t74mj5xqS5ouZeH4p3WW5L4JKoWyFzZtWM7Ln8-IuqGJMZZ4ql4SU7Z2GjI32db__NayxKwDfEognSac1Tb6PgvjMbLT9n-2sy2b5FLJWafo6540ZTUvW4sgl3uPdnD-Xt6IO72EOvx_5aMS74uHvWYdvQx046Pz9XDyztlFgt69PILEZayo8kiehpwczviAonLA",
           capacity: 12,
           equipment: ["Profoto B10X Plus Kit", "Selection of Modifiers", "V-Flats & Sandbags"],
-          panoramaUrl: "/images/panorama-a.jpg",
+          panoramaUrl: "/images/panorama-chatgpt.jpg",
         },
         {
           id: "studio-b",

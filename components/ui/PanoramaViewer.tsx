@@ -13,8 +13,6 @@ const VERTEX_SHADER_SRC = `
   varying vec2 vUv;
   void main() {
     vUv = position * 0.5 + 0.5;
-    // Flip Y for texture space
-    vUv.y = 1.0 - vUv.y;
     gl_Position = vec4(position, 0.0, 1.0);
   }
 `;
@@ -60,7 +58,12 @@ const FRAGMENT_SHADER_SRC = `
     float phi = acos(r2.y);
 
     // Map spherical coordinates to equirectangular texture coords [0, 1]
-    vec2 texCoord = vec2((theta + PI) / (2.0 * PI), phi / PI);
+    // - X is flipped (1.0 - x) to remove horizontal mirroring inside the sphere
+    // - Y: phi / PI (Y=0 is top/ceiling, Y=1 is bottom/floor in default texture mapping)
+    vec2 texCoord = vec2(
+      1.0 - (theta + PI) / (2.0 * PI),
+      phi / PI
+    );
 
     gl_FragColor = texture2D(uTexture, texCoord);
   }
