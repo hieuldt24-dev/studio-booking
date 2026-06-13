@@ -1,26 +1,235 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-display);
+
+  --spacing-margin-mobile: 20px;
+  --spacing-margin-tablet: 32px;
+  --spacing-margin-desktop: 64px;
+  --spacing-gutter: 32px;
+  --spacing-section-gap: 160px;
+  --spacing-container-max: 1440px;
+  --spacing-unit: 8px;
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --background: #f9f9f9;
+  --foreground: #1a1c1c;
+  --font-sans: var(--font-hanken);
+  --font-display: var(--font-syne);
+  --card: #ffffff;
+  --card-foreground: #1a1c1c;
+  --popover: #ffffff;
+  --popover-foreground: #1a1c1c;
+  --primary: #000000;
+  --primary-foreground: #ffffff;
+  --secondary: #4a4d4d;
+  --secondary-foreground: #ffffff;
+  --muted: #f3f3f3;
+  --muted-foreground: #454747;
+  --accent: #e2e2e2;
+  --accent-foreground: #1a1c1c;
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: #000000;
+  --input: #000000;
+  --ring: #7e7576;
+  --radius: 0.25rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card: #0a0a0a;
+  --card-foreground: #ededed;
+  --popover: #0a0a0a;
+  --popover-foreground: #ededed;
+  --primary: #fafafa;
+  --primary-foreground: #0a0a0a;
+  --secondary: #a1a1a1;
+  --secondary-foreground: #fafafa;
+  --muted: #262626;
+  --muted-foreground: #a1a1a1;
+  --accent: #262626;
+  --accent-foreground: #fafafa;
+  --border: #262626;
+  --input: #262626;
+  --ring: #d4d4d4;
+}
+
+/* Focus visible styling for keyboard navigation (WCAG) */
+:focus-visible {
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+}
+
+/* Scroll reveal animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+
+/* CTA sweep animation */
+.cta-sweep {
+  position: relative;
+  overflow: hidden;
+}
+.cta-sweep::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #000000;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 0;
+}
+.cta-sweep:hover::before {
+  transform: scaleX(1);
+}
+
+/* Custom gradient overlay */
+.custom-gradient-overlay {
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.4) 100%);
+}
+
+/* Mobile menu enter animation */
+.mobile-menu-enter {
+  animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Text stroke utility */
+.text-stroke {
+  -webkit-text-stroke: 1px black;
+  color: transparent;
+}
+
+/* Scroll indicator animated line */
+@keyframes scrollLine {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(200%);
+    opacity: 0;
+  }
+}
+
+.animate-scroll-line {
+  animation: scrollLine 2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+/* Grain texture overlay (extracted from HeroSection inline style) */
+.grain-overlay {
+  opacity: 0.03;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* FAQ accordion expand animation */
+@keyframes accordionOpen {
+  from {
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 300px;
+    padding-top: 0;
+  }
+}
+
+.animate-accordion-open {
+  animation: accordionOpen 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  overflow: hidden;
 }

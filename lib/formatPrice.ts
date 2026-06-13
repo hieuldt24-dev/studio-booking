@@ -1,0 +1,11 @@
+/**
+ * Shared VND currency formatter.
+ * Used across PricingSection, EquipmentSection, and BookingSection.
+ */
+export function formatPrice(value: number): string {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
